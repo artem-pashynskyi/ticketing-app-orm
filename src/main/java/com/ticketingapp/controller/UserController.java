@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    RoleService roleService;
-    @Autowired
-    UserService userService;
+    private RoleService roleService;
+    private UserService userService;
+
+    public UserController(RoleService roleService, UserService userService) {
+        this.roleService = roleService;
+        this.userService = userService;
+    }
 
     @GetMapping({"/create", "/add", "/initialize"})
     public String createUser(Model model) {
@@ -31,24 +34,24 @@ public class UserController {
         return "redirect:/user/create";
     }
 
-//    @GetMapping("/edit/{username}")
-//    public String editUser(@PathVariable("username") String username, Model model) {
-//        model.addAttribute("user", userService.findById(username));
-//        model.addAttribute("users", userService.findAll());
-//        model.addAttribute("roles", roleService.findAll());
-//        return "user/edit";
-//    }
-//
-//    @PostMapping("/update/{username}")
-//    public String updateUser(UserDTO user) {
-//        userService.update(user);
-//        return "redirect:/user/create";
-//    }
-//
-//    @GetMapping("/delete/{username}")
-//    private String deleteUser(@PathVariable("username") String username) {
-//        userService.deleteById(username);
-//        return "redirect:/user/create";
-//    }
+    @GetMapping("/edit/{username}")
+    public String editUser(@PathVariable("username") String username, Model model) {
+        model.addAttribute("user", userService.findByUserName(username));
+        model.addAttribute("users", userService.listAllUsers());
+        model.addAttribute("roles", roleService.listAllRoles());
+        return "user/edit";
+    }
+
+    @PostMapping("/update/{username}")
+    public String updateUser(UserDTO user) {
+        userService.update(user);
+        return "redirect:/user/create";
+    }
+
+    @GetMapping("/delete/{username}")
+    private String deleteUser(@PathVariable("username") String username) {
+        userService.delete(username);
+        return "redirect:/user/create";
+    }
 
 }
