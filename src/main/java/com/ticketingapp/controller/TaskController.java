@@ -2,6 +2,9 @@ package com.ticketingapp.controller;
 
 import com.ticketingapp.dto.TaskDTO;
 import com.ticketingapp.enums.Status;
+import com.ticketingapp.service.ProjectService;
+import com.ticketingapp.service.TaskService;
+import com.ticketingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,51 +19,52 @@ import java.time.LocalDateTime;
 @RequestMapping("/task")
 public class TaskController {
 
-//    @Autowired
-//    ProjectService projectService;
-//    @Autowired
-//    UserService userService;
-//    @Autowired
-//    TaskService taskService;
-//
-//    @GetMapping("/create")
-//    public String createTask(Model model) {
-//        model.addAttribute("task", new TaskDTO());
-//        model.addAttribute("projects", projectService.findAll());
-//        model.addAttribute("employees", userService.findEmployees());
-//        model.addAttribute("tasks", taskService.findAll());
-//        return "task/create";
-//    }
-//
-//    @PostMapping("/create")
-//    public String insertTask(TaskDTO task) {
-//        task.setTaskStatus(Status.OPEN);
-//        task.setAssignedDate(LocalDateTime.now());
-//        taskService.save(task);
-//        return "redirect:/task/create";
-//    }
-//
-//    @GetMapping("/delete/{id}")
-//    public String deleteTask(@PathVariable("id") Long id) {
-//        taskService.deleteById(id);
-//        return "redirect:/task/create";
-//    }
-//
-//    @GetMapping("/edit/{id}")
-//    public String editTask(@PathVariable("id") Long id, Model model) {
-//        model.addAttribute("task", taskService.findById(id));
-//        model.addAttribute("projects", projectService.findAll());
-//        model.addAttribute("employees", userService.findEmployees());
-//        model.addAttribute("tasks", taskService.findAll());
-//        return "task/edit";
-//    }
-//
-//    @PostMapping("/update/{id}")
-//    public String updateTask(TaskDTO task) {
-//        taskService.update(task);
-//        return "redirect:/task/create";
-//    }
-//
+    private ProjectService projectService;
+    private UserService userService;
+    private TaskService taskService;
+
+    public TaskController(ProjectService projectService, UserService userService, TaskService taskService) {
+        this.projectService = projectService;
+        this.userService = userService;
+        this.taskService = taskService;
+    }
+
+    @GetMapping("/create")
+    public String createTask(Model model) {
+        model.addAttribute("task", new TaskDTO());
+        model.addAttribute("projects", projectService.listAllProjects());
+        model.addAttribute("employees", userService.listAllByRole("employee"));
+        model.addAttribute("tasks", taskService.listAllTasks());
+        return "task/create";
+    }
+
+    @PostMapping("/create")
+    public String insertTask(TaskDTO task) {
+        taskService.save(task);
+        return "redirect:/task/create";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTask(@PathVariable("id") Long id) {
+        taskService.delete(id);
+        return "redirect:/task/create";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editTask(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("task", taskService.findById(id));
+        model.addAttribute("projects", projectService.listAllProjects());
+        model.addAttribute("employees", userService.listAllByRole("employee"));
+        model.addAttribute("tasks", taskService.listAllTasks());
+        return "task/edit";
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateTask(TaskDTO task) {
+        taskService.update(task);
+        return "redirect:/task/create";
+    }
+
 //    @GetMapping("/employee/status")
 //    public String statusTask(Model model) {
 //        model.addAttribute("tasks", taskService.getNotCompleted());
