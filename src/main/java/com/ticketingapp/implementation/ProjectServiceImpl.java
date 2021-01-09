@@ -1,6 +1,7 @@
 package com.ticketingapp.implementation;
 
 import com.ticketingapp.dto.ProjectDTO;
+import com.ticketingapp.dto.UserDTO;
 import com.ticketingapp.entity.Project;
 import com.ticketingapp.entity.User;
 import com.ticketingapp.enums.Status;
@@ -9,6 +10,8 @@ import com.ticketingapp.mapper.UserMapper;
 import com.ticketingapp.repository.ProjectRepository;
 import com.ticketingapp.repository.UserRepository;
 import com.ticketingapp.service.ProjectService;
+import com.ticketingapp.service.TaskService;
+import com.ticketingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,10 +24,16 @@ public class ProjectServiceImpl implements ProjectService {
 
     private ProjectRepository projectRepository;
     private ProjectMapper projectMapper;
+    private UserMapper userMapper;
+    private UserService userService;
+    private TaskService taskService;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper, UserMapper userMapper, UserService userService, TaskService taskService) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
+        this.userMapper = userMapper;
+        this.userService = userService;
+        this.taskService = taskService;
     }
 
     @Override
@@ -62,7 +71,9 @@ public class ProjectServiceImpl implements ProjectService {
     public void delete(String code) {
         Project project = projectRepository.findByProjectCode(code);
         project.setIsDeleted(true);
+        project.setProjectCode(project.getProjectCode() + "-" + project.getId());
         projectRepository.save(project);
+        taskService.deleteByProject(projectMapper.convertToDTO(project));
     }
 
     @Override
@@ -71,5 +82,21 @@ public class ProjectServiceImpl implements ProjectService {
         project.setProjectStatus(Status.COMPLETE);
         project.setComplete(true);
         projectRepository.save(project);
+    }
+
+    @Override
+    public List<ProjectDTO> listAllProjectDetails() {
+        UserDTO currentUserDTO = userService.findByUserName("john@gamil.com");
+        User user = userMapper.convertToEntity(currentUserDTO);
+        List<Project> projects = projectRepository.findByAssignedManager(user);
+        return projects
+                .stream()
+                .map(project -> {
+                    ProjectDTO projectDTO = projectMapper.convertToDTO(project);
+                    projectDTO.setUnfinishedTasksCount(taskService.totalNonCompletedTasks(project.getProjectCode()));
+                    projectDTO.setCompleteTasksCount(taskService.totalCompletedTasks(project.getProjectCode()));
+                    return projectDTO;
+                })
+                .collect(Collectors.toList());
     }
 }

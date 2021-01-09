@@ -70,32 +70,17 @@ public class ProjectController {
         return "redirect:/project/create";
     }
 
-//    @GetMapping("/manager/complete")
-//    public String getProjectsByManager(Model model) {
-//        UserDTO manager = userService.findById("john@gmail.com");
-//        model.addAttribute("projects", getCountedListOfProjectDTO(manager));
-//        return "manager/project-status";
-//    }
-//
-//    @GetMapping("/manager/complete/{projectcode}")
-//    public String completeProjectsForManagerById(@PathVariable("projectcode") String projectcode) {
-//        projectService.findById(projectcode).setComplete(true);
-//        return "redirect:/project/manager/complete";
-//    }
-//
-//    private List<ProjectDTO> getCountedListOfProjectDTO(UserDTO manager) {
-//        return projectService.findAll()
-//                .stream()
-//                .filter(project -> project.getAssignedManager().equals(manager))
-//                .peek(project -> {
-//                    List<TaskDTO> tasks = taskService.findTasksByManager(manager);
-//                    int completeCount = (int)tasks.stream()
-//                            .filter(task -> task.getProject().equals(project) && task.getTaskStatus() == Status.COMPLETE).count();
-//                    int inCompleteCount = (int)tasks.stream()
-//                            .filter(task -> task.getProject().equals(project) && task.getTaskStatus() != Status.COMPLETE).count();
-//                    project.setCompleteTasksCount(completeCount);
-//                    project.setUnfinishedTasksCount(inCompleteCount);
-//                }).collect(Collectors.toList());
-//    }
+    @GetMapping("/manager/complete")
+    public String getProjectsByManager(Model model) {
+        List<ProjectDTO> projects = projectService.listAllProjectDetails();
+        model.addAttribute("projects", projects);
+        return "manager/project-status";
+    }
+
+    @GetMapping("/manager/complete/{projectcode}")
+    public String completeProjectForManagerById(@PathVariable("projectcode") String projectcode) {
+        projectService.complete(projectcode);
+        return "redirect:/project/manager/complete";
+    }
 
 }
