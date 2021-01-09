@@ -65,20 +65,22 @@ public class TaskController {
         return "redirect:/task/create";
     }
 
-//    @GetMapping("/employee/status")
-//    public String statusTask(Model model) {
-//        model.addAttribute("tasks", taskService.getNotCompleted());
-//        return "employee/pending-task";
-//    }
-//
-//    @GetMapping("/employee/status/edit/{id}")
-//    public String statusEditTask(@PathVariable("id") Long id, Model model) {
-//        model.addAttribute("task", taskService.findById(id));
-//        model.addAttribute("tasks", taskService.getNotCompleted());
-//        model.addAttribute("statuses", Status.values());
-//        return "employee/pending-task-edit";
-//    }
-//
+    @GetMapping("/employee/status")
+    public String statusTask(Model model) {
+        model.addAttribute("tasks", taskService.listAllTasksByStatusIsNot(Status.COMPLETE));
+        return "employee/pending-task";
+    }
+
+    @GetMapping("/employee/status/edit/{id}")
+    public String statusEditTask(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("task", taskService.findById(id));
+        model.addAttribute("users",userService.listAllByRole("employee"));
+        model.addAttribute("projects", projectService.listAllProjects());
+        model.addAttribute("tasks", taskService.listAllTasksByProjectManager());
+        model.addAttribute("statuses", Status.values());
+        return "employee/pending-task-edit";
+    }
+
 //    @PostMapping("/employee/status/update/{id}")
 //    public String statusUpdateTask(@PathVariable("id") Long id, TaskDTO task) {
 //        taskService.findById(id).setTaskStatus(task.getTaskStatus());
