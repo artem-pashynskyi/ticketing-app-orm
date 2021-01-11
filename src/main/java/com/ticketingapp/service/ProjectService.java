@@ -1,7 +1,6 @@
 package com.ticketingapp.service;
 
 import com.ticketingapp.dto.ProjectDTO;
-import com.ticketingapp.entity.Project;
 
 import java.util.List;
 

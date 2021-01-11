@@ -5,7 +5,6 @@ import com.ticketingapp.enums.Status;
 import com.ticketingapp.service.ProjectService;
 import com.ticketingapp.service.TaskService;
 import com.ticketingapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

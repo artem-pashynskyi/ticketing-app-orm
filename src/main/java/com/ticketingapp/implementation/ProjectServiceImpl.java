@@ -8,11 +8,9 @@ import com.ticketingapp.enums.Status;
 import com.ticketingapp.mapper.ProjectMapper;
 import com.ticketingapp.mapper.UserMapper;
 import com.ticketingapp.repository.ProjectRepository;
-import com.ticketingapp.repository.UserRepository;
 import com.ticketingapp.service.ProjectService;
 import com.ticketingapp.service.TaskService;
 import com.ticketingapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

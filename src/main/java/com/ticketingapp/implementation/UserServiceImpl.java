@@ -5,7 +5,6 @@ import com.ticketingapp.entity.User;
 import com.ticketingapp.mapper.UserMapper;
 import com.ticketingapp.repository.UserRepository;
 import com.ticketingapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +14,13 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
     UserRepository userRepository;
-
-    @Autowired
     UserMapper userMapper;
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+    }
 
     @Override
     public List<UserDTO> listAllUsers() {
