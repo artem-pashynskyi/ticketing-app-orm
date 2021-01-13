@@ -84,7 +84,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectDTO> listAllProjectDetails() {
-        UserDTO currentUserDTO = userService.findByUserName("john@gamil.com");
+        UserDTO currentUserDTO = userService.findByUserName("john@gmail.com");
         User user = userMapper.convertToEntity(currentUserDTO);
         List<Project> projects = projectRepository.findByAssignedManager(user);
         return projects
@@ -95,6 +95,15 @@ public class ProjectServiceImpl implements ProjectService {
                     projectDTO.setCompleteTasksCount(taskService.totalCompletedTasks(project.getProjectCode()));
                     return projectDTO;
                 })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProjectDTO> readAllByAssignedManager(User user) {
+        List<Project> projects = projectRepository.findByAssignedManager(user);
+        return projects
+                .stream()
+                .map(project -> projectMapper.convertToDTO(project))
                 .collect(Collectors.toList());
     }
 }
