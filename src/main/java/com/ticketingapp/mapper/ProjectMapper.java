@@ -2,9 +2,7 @@ package com.ticketingapp.mapper;
 
 import com.ticketingapp.dto.ProjectDTO;
 import com.ticketingapp.entity.Project;
-import com.ticketingapp.repository.ProjectRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
