@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.LocalDateTime;
-
 @Controller
 @RequestMapping("/task")
 public class TaskController {
@@ -73,23 +71,21 @@ public class TaskController {
     @GetMapping("/employee/status/edit/{id}")
     public String statusEditTask(@PathVariable("id") Long id, Model model) {
         model.addAttribute("task", taskService.findById(id));
-        model.addAttribute("users",userService.listAllByRole("employee"));
-        model.addAttribute("projects", projectService.listAllProjects());
-        model.addAttribute("tasks", taskService.listAllTasksByProjectManager());
+        model.addAttribute("tasks", taskService.listAllTasksByStatusIsNot(Status.COMPLETE));
         model.addAttribute("statuses", Status.values());
         return "employee/pending-task-edit";
     }
 
-//    @PostMapping("/employee/status/update/{id}")
-//    public String statusUpdateTask(@PathVariable("id") Long id, TaskDTO task) {
-//        taskService.findById(id).setTaskStatus(task.getTaskStatus());
-//        return "redirect:/task/employee/status";
-//    }
-//
-//    @GetMapping("/employee/archive")
-//    public String archive(Model model) {
-//        model.addAttribute("tasks", taskService.getCompleted());
-//        return "employee/archived-projects";
-//    }
+    @PostMapping("/employee/status/update/{id}")
+    public String statusUpdateTask(TaskDTO taskDTO) {
+        taskService.updateStatus(taskDTO);
+        return "redirect:/task/employee/status";
+    }
+
+    @GetMapping("/employee/archive")
+    public String archive(Model model) {
+        model.addAttribute("tasks", taskService.listAllTasksByStatus(Status.COMPLETE));
+        return "employee/archived-projects";
+    }
 
 }
